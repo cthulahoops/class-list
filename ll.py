@@ -30,7 +30,7 @@ class LinkedList(type):
     @classmethod
     def from_iter(cls, lst):
         result = nil
-        for item in lst[::-1]:
+        for item in reversed(lst):
             result = cons(item, result)
         return result
 
