@@ -3,14 +3,14 @@
 
   (FIXME: linked lists in python only support string values for some reason.)
 """
-
+import json
 
 def cons(head, tail):
     return LinkedList(head, (tail,), {})
 
 
 def head(lst):
-    return lst.__name__
+    return json.loads(lst.__name__)
 
 
 def tail(lst):
@@ -18,6 +18,9 @@ def tail(lst):
 
 
 class LinkedList(type):
+    def __new__(mcl, name, bases, namespace):
+        return super().__new__(mcl, json.dumps(name), bases, namespace)
+
     def __repr__(cls):
         return "(" + " ".join(cls) + ")"
 
