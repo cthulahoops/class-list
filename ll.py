@@ -22,7 +22,7 @@ class LinkedList(type):
         return super().__new__(mcl, json.dumps(name), bases, namespace)
 
     def __repr__(cls):
-        return "(" + " ".join(cls) + ")"
+        return "(" + " ".join(repr(x) for x in cls) + ")"
 
     def __iter__(cls):
         ptr = cls
@@ -75,46 +75,3 @@ def foldl(f, acc, lst):
     if lst is nil:
         return acc
     return foldl(f, f(acc, head(lst)), tail(lst))
-
-
-def test():
-    assert head(cons("a", nil)) == "a"
-    lst = cons("a", cons("b", nil))
-
-    assert len(nil) == 0
-    assert len(lst) == 2
-
-    lstlst = map(lambda x: x * 2, lst)
-    assert head(lstlst) == "aa"
-
-    assert list(lstlst) == ["aa", "bb"]
-
-    assert "bb" in lstlst
-
-    assert "(a b)" == repr(lst)
-
-    assert nil == nil
-    assert LinkedList.from_iter(["aa", "bb"]) == lstlst
-
-    assert LinkedList.from_iter(["aa"]) == filter(lambda x: x.startswith("a"), lstlst)
-    assert nil == filter(lambda x: x.startswith("c"), lstlst)
-
-    assert "aabb" == foldl(lambda a, b: a + b, "", lstlst)
-
-
-def test_class():
-    class c(nil):
-        pass
-
-    class b(c):
-        pass
-
-    class a(b):
-        pass
-
-    assert tail(a) == b
-    assert tail(tail(a)) == c
-    assert len(a) == 3
-
-if __name__ == "__main__":
-    test()
