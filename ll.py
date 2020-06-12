@@ -9,23 +9,23 @@ def cons(head, tail):
     return LinkedList(head, (tail,), {})
 
 
-def car(lst):
+def head(lst):
     return lst.__name__
 
 
-def cdr(lst):
+def tail(lst):
     return lst.__base__
 
 
 class LinkedList(type):
-    def __repr__(self):
-        return "(" + " ".join(self) + ")"
+    def __repr__(cls):
+        return "(" + " ".join(cls) + ")"
 
-    def __iter__(self):
-        ptr = self
+    def __iter__(cls):
+        ptr = cls
         while ptr is not nil:
-            yield car(ptr)
-            ptr = cdr(ptr)
+            yield head(ptr)
+            ptr = tail(ptr)
 
     @classmethod
     def from_iter(cls, lst):
@@ -34,17 +34,17 @@ class LinkedList(type):
             result = cons(item, result)
         return result
 
-    def __len__(self):
-        if self is nil:
+    def __len__(cls):
+        if cls is nil:
             return 0
-        return 1 + len(cdr(self))
+        return 1 + len(tail(cls))
 
-    def __eq__(self, other):
+    def __eq__(cls, other):
         if not isinstance(other, LinkedList):
             return NotImplemented
-        if self is nil:
+        if cls is nil:
             return other is nil
-        return car(self) == car(other) and cdr(self) == cdr(other)
+        return head(cls) == head(other) and tail(cls) == tail(other)
 
 
 nil = LinkedList("<NIL>", (), {})
@@ -54,43 +54,39 @@ def map(f, lst):
     if lst is nil:
         return nil
 
-    return cons(f(car(lst)), map(f, cdr(lst)))
+    return cons(
+        f(head(lst)),
+        map(f, tail(lst)))
 
 
 def filter(f, lst):
     if lst is nil:
         return nil
 
-    if f(car(lst)):
-        return cons(car(lst), filter(f, cdr(lst)))
-    return filter(f, cdr(lst))
+    if f(head(lst)):
+        return cons(head(lst), filter(f, tail(lst)))
+    return filter(f, tail(lst))
 
 
 def foldl(f, acc, lst):
     if lst is nil:
         return acc
-    return foldl(f, f(acc, car(lst)), cdr(lst))
-
-
-def tails(lst):
-    return lst.mro()[:-1]
+    return foldl(f, f(acc, head(lst)), tail(lst))
 
 
 def test():
-    assert car(cons("a", nil)) == "a"
+    assert head(cons("a", nil)) == "a"
     lst = cons("a", cons("b", nil))
 
     assert len(nil) == 0
     assert len(lst) == 2
 
     lstlst = map(lambda x: x * 2, lst)
-    assert car(lstlst) == "aa"
+    assert head(lstlst) == "aa"
 
     assert list(lstlst) == ["aa", "bb"]
 
     assert "bb" in lstlst
-
-    assert "[(aa bb), (bb), ()]" == repr(tails(lstlst))
 
     assert "(a b)" == repr(lst)
 
@@ -113,8 +109,8 @@ def test_class():
     class a(b):
         pass
 
-    assert cdr(a) == b
-    assert cdr(cdr(a)) == c
+    assert tail(a) == b
+    assert tail(tail(a)) == c
     assert len(a) == 3
 
 if __name__ == "__main__":
